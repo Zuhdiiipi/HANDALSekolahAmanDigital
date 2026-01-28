@@ -16,10 +16,30 @@
             <h1 class="text-xl font-bold text-white tracking-wider">VALIDATOR PANEL</h1>
         </div>
         <nav class="flex-grow px-4 space-y-2">
-            <a href="{{ route('validator.dashboard') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium">
-                <i class="bi bi-speedometer2"></i> Dashboard
-            </a>
+
+            @if (Auth::user()->role === 'validator')
+                <a href="{{ route('validator.dashboard') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
+           {{ request()->routeIs('validator.dashboard') || request()->routeIs('validator.show') ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+            @endif
+
+            @if (Auth::user()->role === 'admin')
+                {{-- 1. Dashboard Admin --}}
+                <a href="{{ route('admin.dashboard') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
+           {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+
+                <a href="{{ route('admin.registrations.index') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
+           {{ request()->routeIs('admin.registrations.*') ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                    <i class="bi bi-person-check-fill"></i> Penerbitan Akun
+                </a>
+            @endif
+
         </nav>
         <div class="p-4 border-t border-slate-800">
             <form action="{{ route('logout') }}" method="POST">

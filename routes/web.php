@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\RegistrationController;
+use App\Http\Controllers\Admin\DashboardAdminController;
 use App\Http\Controllers\Validator\ValidatorController;
 // Tambahkan Controller Sekolah di sini agar lebih rapi
 use App\Http\Controllers\School\DashboardController;
@@ -75,8 +76,20 @@ Route::middleware(['auth'])->group(function () {
 
     // --- Route Khusus ADMIN ---
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+
+        Route::get('/dashboard', [DashboardAdminController::class, 'index'])
+            ->name('dashboard');
+
+        // Menu "Penerbitan Akun"
+        Route::get('/registrations-verified', [RegistrationController::class, 'index'])
+            ->name('registrations.index');
+
+        // Aksi 1: Terima & Buat Akun
+        Route::post('/registrations/create-account/{id}', [RegistrationController::class, 'createAccount'])
+            ->name('registrations.create');
+
+        // Aksi 2: Tolak & Kembalikan ke Validator (TAMBAHAN PENTING)
+        Route::post('/registrations/reject/{id}', [RegistrationController::class, 'rejectToValidator'])
+            ->name('registrations.reject');
     });
 });

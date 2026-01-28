@@ -16,15 +16,28 @@ class SurveyController extends Controller
     public function start()
     {
         $user = Auth::user();
-        if (!$user->school) {
-            return back()->with('error', 'Profil sekolah belum ada.');
+        if (!$user->school) return back()->with('error', 'Profil sekolah belum ada.');
+
+        // 1. CEK APAKAH SUDAH PERNAH SUBMIT TAHUN INI?
+        $existingSurvey = Survey::where('school_id', $user->school->id)
+            ->where('year', date('Y'))
+            ->first();
+
+        if ($existingSurvey && $existingSurvey->status === 'submitted') {
+            return redirect()->route('school.dashboard')
+                ->with('error', 'Anda sudah menyelesaikan asesmen tahun ini. Hubungi Admin jika ingin revisi.');
         }
 
-        // Cek apakah ada draft tahun ini, jika tidak buat baru
+        // Jika belum atau masih draft, lanjutkan...
         $survey = Survey::firstOrCreate(
-            ['school_id' => $user->school->id, 'year' => date('Y'), 'status' => 'draft'],
-            ['total_score' => 0]
+            ['school_id' => $user->school->id, 'year' => date('Y')], // Cari berdasarkan ini
+            ['status' => 'draft', 'total_score' => 0] // Jika tidak ada, buat dengan data ini
         );
+
+        // Pastikan statusnya draft (jaga-jaga)
+        if ($survey->status === 'submitted') {
+            return redirect()->route('school.dashboard');
+        }
 
         return redirect()->route('school.survey.step', 1);
     }
@@ -32,25 +45,36 @@ class SurveyController extends Controller
     // 2. Menampilkan Pertanyaan Per Kategori (Step)
     public function step($stepNumber)
     {
-        // Ambil semua kategori, urutkan berdasarkan ID
-        $categories = SurveyCategory::orderBy('id')->get();
+        // 1. CEK SECURITY LAGI DI SINI
+        // Agar user tidak bisa tembak URL /survey/step/2 padahal sudah submit
+        $user = Auth::user();
+        $survey = Survey::where('school_id', $user->school->id)
+            ->where('year', date('Y'))
+            ->first();
 
-        // Cek apakah step valid
+        if ($survey && $survey->status === 'submitted') {
+            return redirect()->route('school.dashboard')->with('error', 'Akses ditolak. Survei sudah dikunci.');
+        }
+
+        // ... (Kode selanjutnya sama seperti sebelumnya) ...
+        $categories = SurveyCategory::orderBy('id')->get();
         if ($stepNumber < 1 || $stepNumber > $categories->count()) {
             return redirect()->route('school.dashboard');
         }
-
-        // Ambil kategori sesuai step (Ingat array mulai dari index 0, jadi step-1)
         $currentCategory = $categories[$stepNumber - 1];
-
-        // Ambil soal & opsi untuk kategori ini
         $currentCategory->load('questions.options');
+
+        // Ambil jawaban saved (codingan sebelumnya)
+        $existingAnswers = SurveyAnswer::where('survey_id', $survey->id ?? 0)
+            ->pluck('answer_value', 'question_id')
+            ->toArray();
 
         return view('school.survey.wizard', [
             'currentStep' => $stepNumber,
             'totalSteps' => $categories->count(),
-            'category' => $currentCategory, // Kirim objek kategori lengkap
-            'questions' => $currentCategory->questions
+            'category' => $currentCategory,
+            'questions' => $currentCategory->questions,
+            'existingAnswers' => $existingAnswers
         ]);
     }
 
@@ -59,6 +83,7 @@ class SurveyController extends Controller
     {
         $user = Auth::user();
         $survey = Survey::where('school_id', $user->school->id)
+            ->where('year', date('Y'))
             ->where('status', 'draft')
             ->firstOrFail();
 

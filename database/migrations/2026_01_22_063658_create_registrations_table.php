@@ -14,10 +14,18 @@ return new class extends Migration
         Schema::create('registrations', function (Blueprint $table) {
             $table->id();
             $table->string('school_name');
+            $table->string('jenjang');
+            $table->string('province')->default('Sulawesi Selatan');
+            $table->string('city');
+            $table->string('district');
+            $table->string('village');
             $table->string('email')->unique();
+            $table->string('contact_number');
+            $table->string('npsn');
+            $table->string('assessment_letter')->nullable(); 
             $table->text('address');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->text('admin_notes')->nullable(); // Alasan jika ditolak
+            $table->enum('status', ['pending', 'approved', 'rejected', 'verified'])->default('pending');
+            $table->text('admin_notes')->nullable(); 
             $table->timestamps();
         });
 

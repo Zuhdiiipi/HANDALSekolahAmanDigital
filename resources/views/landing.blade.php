@@ -27,14 +27,14 @@
                         <i class="bi bi-file-earmark-text-fill text-4xl"></i>
                     </div>
 
-                    <h3 class="text-2xl font-bold text-slate-800 mb-3">Pengajuan Akun</h3>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3">Pendaftaran & Asesmen Sekolah</h3>
                     <p class="text-slate-500 mb-8 px-4">
-                        Mulai langkah pengamanan digital sekolah Anda dengan mengisi formulir pendaftaran resmi.
+                        Sekolah dapat mendaftar untuk mengikuti asesmen. Setelah disetujui admin, mereka dapat mengisi kuesioner.
                     </p>
 
                     <a href="{{ route('registration.page') }}"
                         class="mt-auto block w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200">
-                        Daftar Sekarang
+                        Daftar Sekolah
                     </a>
                 </div>
             </div>
@@ -47,14 +47,14 @@
                         <i class="bi bi-bar-chart-line-fill text-4xl"></i>
                     </div>
 
-                    <h3 class="text-2xl font-bold text-slate-800 mb-3">Ranking Sekolah</h3>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3">Peringkat Sekolah</h3>
                     <p class="text-slate-500 mb-8 px-4">
-                        Lihat posisi sekolah Anda dalam indeks keamanan digital di seluruh wilayah Sulawesi Selatan.
+                        Publik dapat melihat data ranking sekolah yang diperbaharui secara berkala berdasarkan hasil asesmen.
                     </p>
 
                     <a href="{{ route('ranking.page') }}"
                         class="mt-auto block w-full py-3 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200">
-                        Lihat Ranking
+                        Lihat Ranking Sekolah
                     </a>
                 </div>
             </div>

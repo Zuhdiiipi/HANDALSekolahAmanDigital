@@ -18,6 +18,7 @@ class Registration extends Model
         'email',
         'npsn',
         'assessment_letter',
-        'status'
+        'status',
+        'admin_notes'
     ];
 }

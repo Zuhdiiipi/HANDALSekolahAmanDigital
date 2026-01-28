@@ -12,6 +12,25 @@
             </a>
         </div>
 
+        @if($registration->admin_notes)
+        <div class="mb-8 bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-xl shadow-sm animate-pulse">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="bi bi-exclamation-circle-fill text-2xl text-orange-600"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-bold text-orange-800">Perhatian: Dikembalikan oleh Admin</h3>
+                    <p class="mt-2 text-sm text-orange-700 leading-relaxed">
+                        {{ $registration->admin_notes }}   
+                    </p>
+                    <p class="mt-2 text-xs text-orange-600 font-semibold uppercase tracking-wider">
+                        Mohon periksa kembali data di bawah sesuai catatan di atas.
+                    </p>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <section>
@@ -48,8 +67,12 @@
                 <form action="{{ route('validator.approve', $registration->id) }}" method="POST" class="flex-grow">
                     @csrf
                     <button
-                        class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all">Setujui
-                        & Buat Akun</button>
+                        class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all">
+                        <i class="bi bi-check-circle-fill mr-2"></i> Verifikasi Data
+                    </button>
+                    <p class="text-center text-xs text-slate-400 mt-2">
+                        Data akan diteruskan ke Admin untuk penerbitan akun.
+                    </p>
                 </form>
                 <button onclick="openRejectModal()"
                     class="px-6 bg-red-50 text-red-600 py-3 rounded-xl font-bold hover:bg-red-100 transition-all">Tolak</button>

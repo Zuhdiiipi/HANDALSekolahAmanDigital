@@ -3,24 +3,24 @@
 namespace App\Http\Controllers\School;
 
 use App\Http\Controllers\Controller;
+use App\Models\Survey; // Import Model Survey
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Ambil data User yang sedang login
         $user = Auth::user();
-
-        // Ambil data profil sekolah dari relasi (asumsi di model User ada relasi 'school')
         $school = $user->school;
 
-        // Cek apakah sudah pernah ada riwayat survei/skor
-        // (Mengambil skor dari kolom current_score di tabel schools)
-        $lastScore = $school->current_score ?? null;
+        // AMBIL DATA SURVEI TAHUN INI
+        $currentSurvey = Survey::where('school_id', $school->id)
+            ->where('year', date('Y'))
+            ->first();
 
-        // Kirim data ke View
-        return view('school.dashboard', compact('user', 'school', 'lastScore'));
+        // Cek status: apakah ada dan apakah sudah disubmit?
+        $surveyStatus = $currentSurvey ? $currentSurvey->status : 'none'; // 'none', 'draft', 'submitted'
+
+        return view('school.dashboard', compact('user', 'school', 'currentSurvey', 'surveyStatus'));
     }
 }
