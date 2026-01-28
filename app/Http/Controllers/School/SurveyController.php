@@ -23,9 +23,14 @@ class SurveyController extends Controller
             ->where('year', date('Y'))
             ->first();
 
-        if ($existingSurvey && $existingSurvey->status === 'submitted') {
+        // if ($existingSurvey && $existingSurvey->status === 'submitted') {
+        //     return redirect()->route('school.dashboard')
+        //         ->with('error', 'Anda sudah menyelesaikan asesmen tahun ini. Hubungi Admin jika ingin revisi.');
+        // }
+
+        if ($existingSurvey && $existingSurvey->status !== 'draft') {
             return redirect()->route('school.dashboard')
-                ->with('error', 'Anda sudah menyelesaikan asesmen tahun ini. Hubungi Admin jika ingin revisi.');
+                ->with('error', 'Anda sudah menyelesaikan asesmen tahun ini.');
         }
 
         // Jika belum atau masih draft, lanjutkan...
@@ -52,11 +57,15 @@ class SurveyController extends Controller
             ->where('year', date('Y'))
             ->first();
 
-        if ($survey && $survey->status === 'submitted') {
-            return redirect()->route('school.dashboard')->with('error', 'Akses ditolak. Survei sudah dikunci.');
+        // if ($survey && $survey->status === 'submitted') {
+        //     return redirect()->route('school.dashboard')->with('error', 'Akses ditolak. Survei sudah dikunci.');
+        // }
+
+        if ($survey && $survey->status !== 'draft') {
+            return redirect()->route('school.dashboard')
+                ->with('error', 'Akses ditolak. Survei Anda sudah dikunci (Status: ' . $survey->status . ').');
         }
 
-        // ... (Kode selanjutnya sama seperti sebelumnya) ...
         $categories = SurveyCategory::orderBy('id')->get();
         if ($stepNumber < 1 || $stepNumber > $categories->count()) {
             return redirect()->route('school.dashboard');
@@ -66,7 +75,7 @@ class SurveyController extends Controller
 
         // Ambil jawaban saved (codingan sebelumnya)
         $existingAnswers = SurveyAnswer::where('survey_id', $survey->id ?? 0)
-            ->pluck('answer_value', 'question_id')
+            ->pluck('answer_value', key: 'question_id')
             ->toArray();
 
         return view('school.survey.wizard', [
@@ -84,9 +93,20 @@ class SurveyController extends Controller
         $user = Auth::user();
         $survey = Survey::where('school_id', $user->school->id)
             ->where('year', date('Y'))
-            ->where('status', 'draft')
-            ->firstOrFail();
+            // ->where('status', 'draft')
+            ->first();
 
+        // 1. Cek apakah survei ada?
+        if (!$survey) {
+            return redirect()->route('school.dashboard')->with('error', 'Data survei tidak ditemukan.');
+        }
+
+        // 2. Cek apakah statusnya valid untuk diedit? (Hanya boleh jika 'draft')
+        if ($survey->status !== 'draft') {
+            return redirect()->route('school.dashboard')
+                ->with('error', 'Gagal menyimpan. Survei sudah berstatus ' . $survey->status);
+        }
+        
         // Simpan Jawaban
         // Input dari form name="answers[question_id]"
         if ($request->has('answers')) {

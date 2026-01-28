@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('school_id')->constrained()->onDelete('cascade');
             $table->year('year');
             $table->decimal('total_score', 8, 2)->default(0);
-            $table->enum('status', ['draft', 'submitted'])->default('draft');
+            $table->enum('status', ['draft', 'submitted', 'verified', 'rejected'])->default('draft');
             $table->timestamps();
         });
     }

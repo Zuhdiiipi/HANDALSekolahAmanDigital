@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('address');
+            $table->string('jenjang');
+            $table->string('npsn');
             $table->decimal('current_score', 8, 2)->default(0); 
             $table->year('last_survey_year')->nullable();
             $table->timestamps();

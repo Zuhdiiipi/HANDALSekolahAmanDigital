@@ -72,7 +72,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/registrations/{id}', [ValidatorController::class, 'show'])->name('show');
         Route::post('/registrations/approve/{id}', [ValidatorController::class, 'approve'])->name('approve');
         Route::post('/registrations/reject/{id}', [ValidatorController::class, 'reject'])->name('reject');
-    });
+
+        Route::get('/survey/verify/{id}', [ValidatorController::class, 'verifySurvey'])->name('survey.verify');
+        Route::post('/survey/verify/{id}', [ValidatorController::class, 'storeVerification'])->name('survey.store');
+        });
 
     // --- Route Khusus ADMIN ---
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

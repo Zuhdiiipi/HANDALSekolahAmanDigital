@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('survey_id')->constrained()->onDelete('cascade');
             $table->foreignId('question_id')->constrained('survey_questions')->onDelete('cascade');
-            $table->text('answer_value'); // ID dari option atau input angka/teks
+            $table->text('answer_value'); 
+            $table->text('validator_note')->nullable(); 
+            $table->integer('verified_score')->nullable(); 
             $table->timestamps();
-        });
+        }); 
     }
 
     /**

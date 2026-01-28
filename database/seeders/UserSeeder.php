@@ -13,8 +13,8 @@ class UserSeeder extends Seeder
         // Membuat Admin
         User::create([
             'name' => 'Admin Handal',
-            'email' => 'admin@handal.com',
-            'password' => Hash::make('password123'),
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('12345678'),
             'role' => 'admin',
             'status' => 'active',
         ]);
@@ -22,10 +22,11 @@ class UserSeeder extends Seeder
         // Membuat Validator
         User::create([
             'name' => 'Validator Sulsel',
-            'email' => 'validator@handal.com',
-            'password' => Hash::make('password123'),
+            'email' => 'validator@gmail.com',
+            'password' => Hash::make('12345678'),
             'role' => 'validator',
             'status' => 'active',
         ]);
+
     }
 }
