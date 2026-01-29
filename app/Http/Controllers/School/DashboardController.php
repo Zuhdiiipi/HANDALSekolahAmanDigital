@@ -13,13 +13,11 @@ class DashboardController extends Controller
         $user = Auth::user();
         $school = $user->school;
 
-        // AMBIL DATA SURVEI TAHUN INI
         $currentSurvey = Survey::where('school_id', $school->id)
             ->where('year', date('Y'))
             ->first();
 
-        // Cek status: apakah ada dan apakah sudah disubmit?
-        $surveyStatus = $currentSurvey ? $currentSurvey->status : 'none'; // 'none', 'draft', 'submitted'
+        $surveyStatus = $currentSurvey ? $currentSurvey->status : 'none';
 
         return view('school.dashboard', compact('user', 'school', 'currentSurvey', 'surveyStatus'));
     }

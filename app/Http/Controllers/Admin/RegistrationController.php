@@ -16,12 +16,10 @@ class RegistrationController extends Controller
 {
     public function index()
     {
-        // Admin hanya melihat yang sudah lolos filter Validator ('verified')
         $registrations = Registration::where('status', 'verified')->latest()->get();
         return view('admin.registrations.index', compact('registrations'));
     }
 
-    // Aksi 1: Setujui & Buat Akun (Sesuai kode Anda)
     public function createAccount($id)
     {
         $reg = Registration::findOrFail($id);
@@ -58,16 +56,14 @@ class RegistrationController extends Controller
         return back()->with('success', 'Akun sekolah berhasil diterbitkan!');
     }
 
-    // Aksi 2: Kembalikan ke Validator (TAMBAHAN)
+    // Kembalikan ke Validator 
     public function rejectToValidator(Request $request, $id)
     {
-        // Validasi alasan penolakan wajib diisi
         $request->validate(['admin_note' => 'required|string']);
 
         $reg = Registration::findOrFail($id);
 
-        // Ubah status KEMBALI ke 'pending' agar muncul lagi di dashboard Validator
-        // Simpan catatan admin ke kolom rejection_reason (atau kolom khusus jika ada)
+        // Simpan catatan admin 
         $reg->update([
             'status' => 'pending',
             'admin_notes' => 'Catatan Admin: ' . $request->admin_note . ' (Mohon dicek ulang)'

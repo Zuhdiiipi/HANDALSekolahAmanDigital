@@ -4,7 +4,7 @@
     <div class="max-w-5xl mx-auto">
 
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-800">Halo, {{ Auth::user()->name }} 👋</h1>
+            <h1 class="text-3xl font-bold text-slate-800">Halo, {{ Auth::user()->name }}</h1>
             <p class="text-slate-500">Selamat datang di panel evaluasi keamanan digital sekolah.</p>
         </div>
 
@@ -38,10 +38,10 @@
                     </div>
 
                     <div class="flex flex-col gap-3 justify-center items-center">
-                        <button disabled
-                            class="inline-flex items-center bg-white/40 cursor-not-allowed text-white px-8 py-3 rounded-full font-bold text-lg border border-white/20">
-                            <i class="bi bi-lock-fill mr-3"></i> Data Terkunci
-                        </button>
+                        <a href="{{ route('school.survey.result', $currentSurvey->id) }}"
+                            class="inline-flex items-center bg-white/20 hover:bg-white/30 text-white px-8 py-3 rounded-full font-bold text-lg border border-white/20 transition-all">
+                            <i class="bi bi-file-earmark-text mr-2"></i> Lihat Rincian Jawaban
+                        </a>
                         <p class="text-xs text-emerald-100 opacity-90 font-medium">
                             Ingin mengedit jawaban? Silakan hubungi Verifikator/Admin.
                         </p>

@@ -177,4 +177,14 @@ class SurveyController extends Controller
         $survey->school->update(['current_score' => $totalFinalScore]);
         Cache::forget('school_rankings');
     }
+
+    public function result($id)
+    {
+        $user = Auth::user();
+
+        $survey = Survey::with(['answers.question.options'])
+            ->firstOrFail();
+
+        return view('school.survey.result', compact('survey'));
+    }
 }
