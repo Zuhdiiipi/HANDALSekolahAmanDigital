@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\DashboardAdminController;
+use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Validator\ValidatorController;
-// Tambahkan Controller Sekolah di sini agar lebih rapi
 use App\Http\Controllers\School\DashboardController;
 use App\Http\Controllers\School\SurveyController;
 use App\Http\Controllers\School\ProfileController;
@@ -69,5 +70,8 @@ Route::middleware(['auth'])->group(function () {
         // Aksi 2: Tolak & Kembalikan ke Validator 
         Route::post('/registrations/reject/{id}', [RegistrationController::class, 'rejectToValidator'])
             ->name('registrations.reject');
+
+        Route::resource('categories', CategoryController::class);
+        Route::resource('questions', QuestionController::class);
     });
 });

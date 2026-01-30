@@ -137,44 +137,57 @@ class SurveyController extends Controller
     }
 
     // 4. Logika Hitung Skor (Rumus Anda)
+    // GANTI method calculateFinalScore dengan yang ini:
+    // GANTI method calculateFinalScore dengan yang ini:
     private function calculateFinalScore(Survey $survey)
     {
-        $totalFinalScore = 0;
+        $totalObtainedScore = 0; // Poin yang didapat user
+        $maxPossibleScore = 0;   // Total poin maksimal jika semua jawaban sempurna (105)
+
+        // Ambil semua pertanyaan beserta opsinya
         $categories = SurveyCategory::with('questions.options')->get();
 
         foreach ($categories as $category) {
-            $categoryScore = 0;
-
             foreach ($category->questions as $question) {
-                // Ambil jawaban user dari DB
+
+                // 1. Cari nilai tertinggi dari opsi soal ini (Misal: 5)
+                // Ini untuk menghitung penyebut rumus (Max Score)
+                $maxQuestionScore = $question->options->max('score_value');
+                $maxPossibleScore += $maxQuestionScore;
+
+                // 2. Cari jawaban user
                 $answer = SurveyAnswer::where('survey_id', $survey->id)
                     ->where('question_id', $question->id)
                     ->first();
 
                 if ($answer) {
-                    // Cari opsi yang dipilih untuk tahu skornya (misal: Ya=100)
-                    $option = $question->options->where('id', $answer->answer_value)->first();
-                    $scoreVal = $option ? $option->score_value : 0;
-
-                    // Rumus: Skor Opsi * (Bobot Soal / 100)
-                    // Contoh: Dapat 100 * (100% bobot soal) = 100 poin
-                    $categoryScore += ($scoreVal * ($question->weight / 100));
+                    // Ambil poin dari opsi yang dipilih
+                    $selectedOption = $question->options->where('id', $answer->answer_value)->first();
+                    if ($selectedOption) {
+                        $totalObtainedScore += $selectedOption->score_value;
+                    }
                 }
             }
-
-            // Rumus Akhir: Total Skor Kategori * (Bobot Kategori / 100)
-            // Contoh: Poin Kategori 100 * (40% bobot kategori) = 40 Poin Final
-            $totalFinalScore += ($categoryScore * ($category->weight / 100));
         }
 
-        // Simpan Hasil
+        // 3. Hitung Nilai Akhir (Skala 100)
+        // Rumus: (Didapat / Maksimal) * 100
+        // Contoh: (82 / 105) * 100 = 78.09
+        if ($maxPossibleScore > 0) {
+            $finalScore = ($totalObtainedScore / $maxPossibleScore) * 100;
+        } else {
+            $finalScore = 0;
+        }
+
+        // 4. Simpan ke Database
         $survey->update([
-            'total_score' => $totalFinalScore,
+            'total_score' => $finalScore,
             'status' => 'submitted'
         ]);
 
-        // Update Profil Sekolah & Cache
-        $survey->school->update(['current_score' => $totalFinalScore]);
+        // Update Profil Sekolah (untuk ranking global)
+        $survey->school->update(['current_score' => $finalScore]);
+
         Cache::forget('school_rankings');
     }
 

@@ -22,29 +22,50 @@
                 {{-- PERBAIKAN 2: Gunakan in_array agar status verified/approved juga masuk ke tampilan terkunci --}}
                 @if (in_array($surveyStatus, ['submitted', 'verified', 'approved']))
                     {{-- KONDISI 1: SUDAH SELESAI (SUBMITTED / VERIFIED / APPROVED) --}}
-                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Terima Kasih!</h2>
-                    <p class="text-emerald-100 text-lg mb-8 max-w-2xl mx-auto">
-                        Anda telah menyelesaikan Asesmen Mandiri tahun ini.
-                        @if ($surveyStatus == 'verified')
-                            Status saat ini: <span
-                                class="font-bold text-white bg-green-500/20 px-2 py-1 rounded">Terverifikasi</span>
-                        @else
-                            Skor keamanan sekolah Anda saat ini adalah:
-                        @endif
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Hasil Asesmen</h2>
+                    <p class="text-emerald-100 text-lg mb-6 max-w-2xl mx-auto">
+                        Selamat! Berikut adalah predikat keamanan digital sekolah Anda berdasarkan poin yang diperoleh.
                     </p>
 
-                    <div class="text-5xl font-bold mb-8 bg-white/20 inline-block px-8 py-4 rounded-2xl backdrop-blur-sm">
-                        {{ number_format($currentSurvey->total_score ?? 0, 0) }}
+                    {{-- TAMPILAN BADGE PERINGKAT --}}
+                    <div class="mb-8">
+                        <div
+                            class="inline-flex flex-col items-center justify-center p-6 bg-white rounded-3xl shadow-2xl animate-fade-in-up">
+
+                            {{-- Icon Peringkat --}}
+                            <div
+                                class="w-20 h-20 flex items-center justify-center rounded-full mb-4 
+                            {{ $currentSurvey->total_score >= 86
+                                ? 'bg-cyan-100 text-cyan-500'
+                                : ($currentSurvey->total_score >= 76
+                                    ? 'bg-slate-100 text-slate-500'
+                                    : ($currentSurvey->total_score >= 51
+                                        ? 'bg-yellow-100 text-yellow-500'
+                                        : ($currentSurvey->total_score >= 31
+                                            ? 'bg-gray-100 text-gray-500'
+                                            : 'bg-red-100 text-red-500'))) }}">
+                                <i class="bi {{ $currentSurvey->rank_icon }} text-4xl"></i>
+                            </div>
+
+                            {{-- Nama Peringkat --}}
+                            <h3 class="text-2xl font-bold text-slate-800 mb-1">
+                                {{ $currentSurvey->rank_label }}
+                            </h3>
+
+                            {{-- Skor Nilai --}}
+                            <p class="text-slate-500 font-medium">
+                                Skor Akhir: <span
+                                    class="text-blue-600 font-bold text-xl">{{ number_format($currentSurvey->total_score, 1) }}</span>
+                                / 100
+                            </p>
+                        </div>
                     </div>
 
                     <div class="flex flex-col gap-3 justify-center items-center">
                         <a href="{{ route('school.survey.result', $currentSurvey->id) }}"
                             class="inline-flex items-center bg-white/20 hover:bg-white/30 text-white px-8 py-3 rounded-full font-bold text-lg border border-white/20 transition-all">
-                            <i class="bi bi-file-earmark-text mr-2"></i> Lihat Rincian Jawaban
+                            <i class="bi bi-file-earmark-text mr-2"></i> Lihat Rincian & Poin
                         </a>
-                        <p class="text-xs text-emerald-100 opacity-90 font-medium">
-                            Ingin mengedit jawaban? Silakan hubungi Verifikator/Admin.
-                        </p>
                     </div>
                 @elseif($surveyStatus === 'draft')
                     {{-- KONDISI 2: MASIH DRAFT (LANJUTKAN) --}}
