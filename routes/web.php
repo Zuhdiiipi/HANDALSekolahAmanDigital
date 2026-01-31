@@ -42,8 +42,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/survey/process/{step}', [SurveyController::class, 'process'])->name('survey.process'); // Simpan jawaban sementara
         Route::get('/survey/result/{id}', [SurveyController::class, 'result'])->name('survey.result'); // Hasil Akhir
         // 3. Profil 
-        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-        Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+        // FITUR PROFIL
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     });
 
     Route::middleware(['role:validator'])->prefix('validator')->name('validator.')->group(function () {
@@ -54,7 +56,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/survey/verify/{id}', [ValidatorController::class, 'verifySurvey'])->name('survey.verify');
         Route::post('/survey/verify/{id}', [ValidatorController::class, 'storeVerification'])->name('survey.store');
-        });
+    });
 
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardAdminController::class, 'index'])
