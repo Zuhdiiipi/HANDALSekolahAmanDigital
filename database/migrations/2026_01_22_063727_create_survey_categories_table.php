@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('survey_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('weight'); // Bobot kategori (misal: 30%)
+            $table->integer('weight'); 
             $table->timestamps();
         });
     }

@@ -23,10 +23,14 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'weight' => 'required|numeric|min:0|max:100', // Bobot dalam %
         ]);
 
-        SurveyCategory::create($request->all());
+        // FIX: Manual input weight = 0 agar database tidak error
+        SurveyCategory::create([
+            'name' => $request->name,
+            'weight' => 0
+        ]);
+
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
@@ -39,16 +43,19 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'weight' => 'required|numeric|min:0|max:100',
         ]);
 
-        $category->update($request->all());
+        // FIX: Manual update
+        $category->update([
+            'name' => $request->name,
+            'weight' => 0
+        ]);
+
         return redirect()->route('admin.categories.index')->with('success', 'Kategori diperbarui.');
     }
 
     public function destroy(SurveyCategory $category)
     {
-        // Opsional: Cek jika ada soal, jangan dihapus
         if ($category->questions()->count() > 0) {
             return back()->with('error', 'Gagal hapus. Kategori ini memiliki pertanyaan.');
         }

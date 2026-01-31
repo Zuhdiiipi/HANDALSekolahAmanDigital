@@ -13,7 +13,6 @@ class QuestionController extends Controller
 {
     public function index()
     {
-        // Tampilkan soal dikelompokkan per kategori
         $questions = SurveyQuestion::with('category')->latest()->get();
         return view('admin.questions.index', compact('questions'));
     }
@@ -30,33 +29,31 @@ class QuestionController extends Controller
         $request->validate([
             'category_id' => 'required|exists:survey_categories,id',
             'question_text' => 'required|string',
-            'type' => 'required|in:mcq,checkbox,number,text', // <--- TAMBAHAN VALIDASI
-            'weight' => 'required|numeric',
+            // 'type' dihapus dari validasi karena kita hardcode di bawah
+            // 'weight' dihapus dari validasi
 
-            // Validasi Opsi: HANYA WAJIB JIKA TIPE 'mcq' atau 'checkbox'
-            'options' => 'required_if:type,mcq,checkbox|array',
-            'options.*.text' => 'required_with:options',
-            'options.*.score' => 'required_with:options',
+            // Opsi Jawaban Wajib Ada
+            'options' => 'required|array|min:2',
+            'options.*.text' => 'required',
+            'options.*.score' => 'required|numeric',
         ]);
 
         DB::transaction(function () use ($request) {
-            // 2. Simpan Soal (Sertakan TYPE)
+            // 2. Simpan Soal
             $question = SurveyQuestion::create([
                 'category_id' => $request->category_id,
                 'question_text' => $request->question_text,
-                'type' => $request->type, // <--- SIMPAN TIPE SOAL
-                'weight' => $request->weight,
+                'type' => 'mcq', // FIX: Typo 'mqc' -> 'mcq'
+                'weight' => 0,   // FIX: Set default 0
             ]);
 
-            // 3. Simpan Opsi (Hanya jika tipe mcq/checkbox)
-            if (in_array($request->type, ['mcq', 'checkbox']) && $request->has('options')) {
-                foreach ($request->options as $opt) {
-                    SurveyQuestionOption::create([
-                        'question_id' => $question->id,
-                        'option_text' => $opt['text'],
-                        'score_value' => $opt['score'],
-                    ]);
-                }
+            // 3. Simpan Opsi
+            foreach ($request->options as $opt) {
+                SurveyQuestionOption::create([
+                    'question_id' => $question->id,
+                    'option_text' => $opt['text'],
+                    'score_value' => $opt['score'],
+                ]);
             }
         });
 
@@ -77,7 +74,7 @@ class QuestionController extends Controller
         $request->validate([
             'category_id' => 'required',
             'question_text' => 'required',
-            'weight' => 'required|numeric',
+            // 'weight' dihapus dari validasi
             'options' => 'required|array|min:2',
             'options.*.text' => 'required',
             'options.*.score' => 'required',
@@ -88,11 +85,10 @@ class QuestionController extends Controller
             $question->update([
                 'category_id' => $request->category_id,
                 'question_text' => $request->question_text,
-                'weight' => $request->weight,
+                'weight' => 0, // Pastikan tetap 0 atau nilai lama
             ]);
 
-            // 2. Update Opsi (Cara Aman: Hapus semua opsi lama, buat baru)
-            // Ini menghindari kerumitan mencocokkan ID opsi di frontend
+            // 2. Update Opsi (Hapus lama, buat baru)
             $question->options()->delete();
 
             foreach ($request->options as $opt) {
@@ -110,8 +106,8 @@ class QuestionController extends Controller
     public function destroy($id)
     {
         $question = SurveyQuestion::findOrFail($id);
-        $question->options()->delete(); // Hapus opsi dulu
-        $question->delete(); // Hapus soal
+        $question->options()->delete();
+        $question->delete();
         return back()->with('success', 'Pertanyaan dihapus.');
     }
 }

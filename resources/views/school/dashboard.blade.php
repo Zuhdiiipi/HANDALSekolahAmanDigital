@@ -98,28 +98,72 @@
 
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center">
-                <h3 class="font-bold text-slate-700">Riwayat Evaluasi Terakhir</h3>
-                <span class="text-xs text-slate-400">Menampilkan 1 data terakhir</span>
+                <h3 class="font-bold text-slate-700">Riwayat Evaluasi Lengkap</h3>
+                <span class="text-xs text-slate-400">Total: {{ $historySurveys->count() }} Data</span>
             </div>
-            <div class="p-6 text-center text-slate-500">
-                @if ($currentSurvey)
-                    <div class="py-4">
-                        <p class="text-lg font-bold text-slate-700">Tahun {{ $currentSurvey->year }}</p>
-                        <p>Status:
-                            {{-- PERBAIKAN 3: Warna teks status yang lebih dinamis --}}
-                            <span
-                                class="font-bold 
-                            {{ in_array($surveyStatus, ['submitted', 'verified', 'approved']) ? 'text-green-600' : 'text-orange-500' }}">
-                                {{ ucfirst($surveyStatus) }}
-                            </span>
-                        </p>
-                    </div>
-                @else
-                    <div class="py-8">
-                        <i class="bi bi-clipboard-data text-4xl text-slate-300 mb-3 block"></i>
-                        <p>Belum ada riwayat survei.</p>
-                    </div>
-                @endif
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
+                        <tr>
+                            <th class="px-6 py-4">Tahun</th>
+                            <th class="px-6 py-4 text-center">Skor</th>
+                            <th class="px-6 py-4 text-center">Predikat</th>
+                            <th class="px-6 py-4 text-center">Status</th>
+                            <th class="px-6 py-4 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse($historySurveys as $history)
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-700">
+                                    {{ $history->year }}
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span
+                                        class="font-bold text-blue-600">{{ number_format($history->total_score, 1) }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    {{-- Menggunakan Accessor Rank Label dari Model Survey --}}
+                                    <span
+                                        class="text-xs font-semibold px-2 py-1 rounded border {{ $history->rank_color ?? 'bg-slate-100 border-slate-200 text-slate-500' }}">
+                                        {{ $history->rank_label ?? '-' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span
+                                        class="text-xs font-bold uppercase {{ in_array($history->status, ['submitted', 'verified', 'approved']) ? 'text-emerald-600' : 'text-orange-500' }}">
+                                        {{ $history->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    @if (in_array($history->status, ['submitted', 'verified', 'approved']))
+                                        <a href="{{ route('school.survey.result', $history->id) }}"
+                                            class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                                            Lihat Detail
+                                        </a>
+                                    @elseif($history->status == 'draft' && $history->year == date('Y'))
+                                        <a href="{{ route('school.survey.start') }}"
+                                            class="text-sm font-bold text-yellow-600 hover:text-yellow-800 hover:underline">
+                                            Lanjutkan
+                                        </a>
+                                    @else
+                                        <span class="text-slate-400 text-sm">-</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-slate-400">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <i class="bi bi-clipboard-data text-4xl text-slate-300 mb-3"></i>
+                                        <p>Belum ada riwayat survei.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 

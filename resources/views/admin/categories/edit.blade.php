@@ -21,14 +21,7 @@
                     <input type="text" name="name" value="{{ $category->name }}" class="w-full rounded-xl border-slate-300 focus:ring-blue-500 focus:border-blue-500" required>
                 </div>
 
-                {{-- Bobot --}}
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Bobot Penilaian (%)</label>
-                    <div class="relative">
-                        <input type="number" name="weight" value="{{ $category->weight }}" min="0" max="100" class="w-full rounded-xl border-slate-300 focus:ring-blue-500 focus:border-blue-500 pr-12" required>
-                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-500 font-bold">%</div>
-                    </div>
-                </div>
+                {{-- HAPUS INPUT BOBOT DISINI --}}
 
                 {{-- Tombol --}}
                 <div class="pt-4 flex justify-end gap-3">

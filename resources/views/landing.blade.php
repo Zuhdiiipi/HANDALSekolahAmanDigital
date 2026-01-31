@@ -11,7 +11,7 @@
         </h1>
 
         <p class="text-lg md:text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed mb-8">
-            Pemeringkatan Sekolah Aman Digital (HANDAL) terhadap Sekolah Menengah di Sulawesi Selatan
+            Pemeringkatan Sekolah Aman Digital (HANDAL) terhadap Sekolah Menengah di Indonesia
         </p>
     </div>
 

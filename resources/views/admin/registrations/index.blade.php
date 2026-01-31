@@ -12,7 +12,6 @@
                         <th class="px-6 py-4 font-bold">NPSN</th>
                         <th class="px-6 py-4 font-bold">Status</th>
                         <th class="px-6 py-4 font-bold text-right">Aksi</th>
-                        {{-- <th class="px-6 py-4"></th> --}}
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -47,11 +46,6 @@
 
                             </td>
 
-                            {{-- <td class="px-6 py-4 text-right">
-                                <a href="{{ route('validator.show', $reg->id) }}"
-                                    class="text-blue-600 hover:text-blue-800 font-bold text-sm">Detail <i
-                                        class="bi bi-arrow-right"></i></a>
-                            </td> --}}
                         </tr>
                     @empty
                         <tr>

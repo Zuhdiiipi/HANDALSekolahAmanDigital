@@ -21,17 +21,6 @@
                     @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Bobot --}}
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Bobot Penilaian (%)</label>
-                    <div class="relative">
-                        <input type="number" name="weight" min="0" max="100" class="w-full rounded-xl border-slate-300 focus:ring-blue-500 focus:border-blue-500 pr-12" placeholder="0 - 100" required>
-                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-500 font-bold">%</div>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-2">Total bobot semua kategori idealnya harus 100%.</p>
-                    @error('weight') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>
-
                 {{-- Tombol --}}
                 <div class="pt-4 flex justify-end gap-3">
                     <button type="reset" class="px-6 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">Reset</button>

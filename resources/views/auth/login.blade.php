@@ -37,7 +37,7 @@
                         </div>
                         <input id="email" name="email" type="email" autocomplete="email" required 
                                class="appearance-none block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all" 
-                               placeholder="nama@sekolah.sch.id">
+                               placeholder="Email Sekolah">
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@
             <div class="mt-6 text-center">
                 <p class="text-sm text-slate-500">
                     Belum punya akun? 
-                    <a href="{{ route('landing') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                    <a href="{{ route('registration.page') }}" class="font-medium text-blue-600 hover:text-blue-500">
                         Ajukan pendaftaran
                     </a>
                 </p>

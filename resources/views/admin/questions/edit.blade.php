@@ -3,74 +3,69 @@
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-slate-800">Tambah Pertanyaan Baru</h1>
+            <h1 class="text-2xl font-bold text-slate-800">Edit Pertanyaan</h1>
             <a href="{{ route('admin.questions.index') }}" class="text-slate-500 hover:text-slate-800">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
 
-        <form action="{{ route('admin.questions.store') }}" method="POST" id="questionForm">
+        <form action="{{ route('admin.questions.update', $question->id) }}" method="POST">
             @csrf
+            @method('PUT')
 
             {{-- BAGIAN 1: DETAIL PERTANYAAN --}}
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
                 <h3 class="font-bold text-slate-700 mb-4 border-b pb-2">Informasi Soal</h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-                    <div class="md:col-span-2">
+                <div class="space-y-4">
+                    <div>
                         <label class="block text-sm font-bold text-slate-600 mb-2">Kategori (Bab)</label>
                         <select name="category_id" class="w-full rounded-lg border-slate-300 focus:ring-blue-500" required>
                             <option value="">-- Pilih Kategori --</option>
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }} (Bobot Bab: {{ $cat->weight }}%)
+                                <option value="{{ $cat->id }}"
+                                    {{ $question->category_id == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Bobot Soal (%)</label>
-                        <input type="number" step="0.1" name="weight"
-                            class="w-full rounded-lg border-slate-300 focus:ring-blue-500" placeholder="Contoh: 10"
-                            required>
-                        <p class="text-xs text-slate-400 mt-1">Bobot pertanyaan ini dalam bab tersebut.</p>
-                    </div>
-                </div>
 
-                <div class="mb-2">
-                    <label class="block text-sm font-bold text-slate-600 mb-2">Teks Pertanyaan</label>
-                    <textarea name="question_text" rows="3" class="w-full rounded-lg border-slate-300 focus:ring-blue-500"
-                        placeholder="Tulis pertanyaan lengkap..." required></textarea>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-600 mb-2">Teks Pertanyaan / Indikator</label>
+                        <textarea name="question_text" rows="3" class="w-full rounded-lg border-slate-300 focus:ring-blue-500" required>{{ $question->question_text }}</textarea>
+                    </div>
                 </div>
             </div>
 
-            {{-- BAGIAN 2: OPSI JAWABAN DINAMIS --}}
+            {{-- BAGIAN 2: OPSI JAWABAN --}}
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
                 <div class="flex justify-between items-center mb-4 border-b pb-2">
-                    <h3 class="font-bold text-slate-700">Opsi Jawaban & Skor</h3>
+                    <h3 class="font-bold text-slate-700">Rubrik Penilaian</h3>
                     <button type="button" onclick="addOption()"
                         class="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-lg font-bold hover:bg-blue-100">
                         <i class="bi bi-plus-lg"></i> Tambah Opsi
                     </button>
                 </div>
 
-                {{-- Container tempat Opsi muncul --}}
                 <div id="options-container" class="space-y-4">
                     @foreach ($question->options as $index => $option)
                         <div class="option-row flex gap-4 items-start bg-slate-50 p-3 rounded-xl border border-slate-200">
                             <div class="flex-grow">
-                                <label class="text-xs font-bold text-slate-500 block mb-1">Teks Opsi</label>
+                                <label class="text-xs font-bold text-slate-500 block mb-1">Keterangan Rubrik</label>
                                 <input type="text" name="options[{{ $index }}][text]"
                                     value="{{ $option->option_text }}" class="w-full rounded-lg border-slate-300 text-sm"
                                     required>
                             </div>
-                            <div class="w-24">
-                                <label class="text-xs font-bold text-slate-500 block mb-1">Nilai</label>
+
+                            <div class="w-10">
+                                <label class="text-xs font-bold text-slate-500 block mb-1">Poin</label>
                                 <input type="number" name="options[{{ $index }}][score]"
-                                    value="{{ $option->score_value }}" class="w-full rounded-lg border-slate-300 text-sm"
-                                    required>
+                                    value="{{ $option->score_value }}"
+                                    class="w-full rounded-lg border-slate-300 text-sm font-bold text-center" required>
                             </div>
-                            <div class="pt-6">
-                                {{-- Tombol hapus (Javascript akan menghapusnya dari DOM, controller akan menghapusnya dari DB saat save) --}}
+                            <div class="w-10">
+                                <label class="text-xs font-bold text-slate-500 block mb-1">Aksi</label>
                                 <button type="button" onclick="removeOption(this)"
                                     class="text-red-500 hover:text-red-700"><i class="bi bi-trash-fill"></i></button>
                             </div>
@@ -80,50 +75,40 @@
             </div>
 
             <div class="flex justify-end gap-4">
-                <button type="reset" class="px-6 py-3 font-bold text-slate-500">Reset</button>
+                <a href="{{ route('admin.questions.index') }}" class="px-6 py-3 font-bold text-slate-500">Batal</a>
                 <button type="submit"
                     class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700">
-                    Simpan Pertanyaan
+                    Perbarui Pertanyaan
                 </button>
             </div>
         </form>
     </div>
 
     <script>
-        let optionIndex = {{ $question->options->count() }};
-    </script>
-
-    <script>
-        let optionIndex = 2; // Mulai dari index 2 karena 0 dan 1 sudah ada default
+        let optionIndex = {{ $question->options->count() + 1 }};
 
         function addOption() {
             const container = document.getElementById('options-container');
-
             const html = `
-        <div class="option-row flex gap-4 items-start bg-slate-50 p-3 rounded-xl border border-slate-200 animate-fade-in">
-            <div class="flex-grow">
-                <input type="text" name="options[${optionIndex}][text]" class="w-full rounded-lg border-slate-300 text-sm" placeholder="Opsi Baru..." required>
-            </div>
-            <div class="w-24">
-                <input type="number" name="options[${optionIndex}][score]" class="w-full rounded-lg border-slate-300 text-sm" placeholder="Nilai" required>
-            </div>
-            <div class="pt-1">
-                <button type="button" onclick="removeOption(this)" class="text-red-500 hover:text-red-700 p-2"><i class="bi bi-trash-fill"></i></button>
-            </div>
-        </div>
-        `;
-
-            // Insert HTML baru ke container
+            <div class="option-row flex gap-4 items-start bg-slate-50 p-3 rounded-xl border border-slate-200 animate-fade-in">
+                <div class="flex-grow">
+                    <input type="text" name="options[${optionIndex}][text]" class="w-full rounded-lg border-slate-300 text-sm" placeholder="Opsi Baru..." required>
+                </div>
+                <div class="w-24">
+                    <input type="number" name="options[${optionIndex}][score]" class="w-full rounded-lg border-slate-300 text-sm font-bold text-center" placeholder="Poin" required>
+                </div>
+                <div class="pt-1">
+                    <button type="button" onclick="removeOption(this)" class="text-red-500 hover:text-red-700 p-2"><i class="bi bi-trash-fill"></i></button>
+                </div>
+            </div>`;
             container.insertAdjacentHTML('beforeend', html);
             optionIndex++;
         }
 
         function removeOption(button) {
-            // Hapus elemen parent (div.option-row)
             button.closest('.option-row').remove();
         }
     </script>
-
     <style>
         @keyframes fadeIn {
             from {
