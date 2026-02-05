@@ -150,8 +150,9 @@ class SurveyController extends Controller
             // B. Jika ini step terakhir, Hitung Skor & Finalisasi
             $this->calculateFinalScore($survey);
 
+            // UBAH PESANNYA DI SINI:
             return redirect()->route('school.dashboard')
-                ->with('success', 'Asesmen berhasil disubmit! Menunggu verifikasi.');
+                ->with('success', 'Asesmen berhasil disubmit! Nilai sementara Anda sudah keluar.');
         }
     }
 

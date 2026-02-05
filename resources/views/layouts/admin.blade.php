@@ -9,19 +9,51 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
-<body class="bg-slate-50 antialiased flex">
+{{-- Ubah 'flex' menjadi 'flex-col md:flex-row' agar layout bisa menumpuk di HP dan menyamping di PC --}}
 
-    <aside class="w-64 bg-slate-900 min-h-screen flex flex-col sticky top-0 shadow-xl z-50">
-        <div class="p-6">
-            <h1 class="text-xl font-bold text-white tracking-wider">ADMIN PANEL</h1>
-            <p class="text-xs text-slate-500 mt-1">Handal Sekolah Aman</p>
+<body class="bg-slate-50 antialiased flex flex-col md:flex-row min-h-screen relative">
+
+    {{-- 1. HEADER MOBILE (Hanya muncul di layar kecil / md:hidden) --}}
+    <header class="bg-slate-900 text-white p-4 flex justify-between items-center md:hidden sticky top-0 z-40 shadow-md">
+        <span class="font-bold tracking-wider">ADMIN PANEL</span>
+        <button onclick="toggleSidebar()" class="text-white hover:text-slate-300 focus:outline-none">
+            <i class="bi bi-list text-3xl"></i> {{-- Icon Garis 3 --}}
+        </button>
+    </header>
+
+    {{-- 2. OVERLAY GELAP (Background saat menu terbuka di HP) --}}
+    <div id="sidebarOverlay" onclick="closeSidebar()"
+        class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity opacity-0 md:hidden">
+    </div>
+
+    {{-- 3. SIDEBAR (Dimodifikasi agar responsif) --}}
+    {{-- 
+         - fixed inset-y-0 left-0: Menempel di kiri layar penuh
+         - transform -translate-x-full: Defaultnya sembunyi ke kiri (keluar layar)
+         - md:translate-x-0: Di layar Desktop, sidebar kembali muncul normal
+         - md:static: Di desktop posisinya tidak melayang (fixed), tapi statis/sticky sesuai layout
+         - transition-transform: Efek animasi geser halus
+    --}}
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform -translate-x-full transition-transform duration-300 ease-in-out 
+                  md:translate-x-0 md:static md:sticky md:top-0 md:h-screen md:flex md:flex-col shadow-xl">
+
+        {{-- Header Sidebar (Logo + Tombol Close di HP) --}}
+        <div class="p-6 flex justify-between items-start">
+            <div>
+                <h1 class="text-xl font-bold text-white tracking-wider">ADMIN PANEL</h1>
+                <p class="text-xs text-slate-500 mt-1">Handal Sekolah Aman</p>
+            </div>
+            {{-- Tombol Close (X) hanya muncul di HP --}}
+            <button onclick="closeSidebar()" class="md:hidden text-slate-400 hover:text-white">
+                <i class="bi bi-x-lg text-xl"></i>
+            </button>
         </div>
 
-        <nav class="flex-grow px-4 space-y-2 overflow-y-auto">
+        {{-- Navigasi --}}
+        <nav class="flex-grow px-4 space-y-2 overflow-y-auto pb-20 md:pb-0">
 
-            {{-- =============================================== --}}
-            {{-- MENU VALIDATOR                                  --}}
-            {{-- =============================================== --}}
+            {{-- MENU VALIDATOR --}}
             @if (Auth::user()->role === 'validator')
                 <a href="{{ route('validator.dashboard') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
@@ -30,14 +62,9 @@
                 </a>
             @endif
 
-            {{-- =============================================== --}}
-            {{-- MENU ADMIN                                      --}}
-            {{-- =============================================== --}}
+            {{-- MENU ADMIN --}}
             @if (Auth::user()->role === 'admin')
-                {{-- GROUP 1: UTAMA --}}
-                <div class="px-2 mt-4 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Utama
-                </div>
+                <div class="px-2 mt-4 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Utama</div>
 
                 <a href="{{ route('admin.dashboard') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
@@ -51,30 +78,25 @@
                     <i class="bi bi-person-check-fill"></i> Penerbitan Akun
                 </a>
 
-                {{-- GROUP 2: MANAJEMEN SURVEI (BARU) --}}
-                <div class="px-2 mt-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Manajemen Survei
+                <div class="px-2 mt-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Manajemen Survei
                 </div>
 
-                {{-- Menu Kategori / Bab --}}
                 <a href="{{ route('admin.categories.index') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
                    {{ request()->routeIs('admin.categories.*') ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <i class="bi bi-tags-fill"></i> Kategori (Bab)
                 </a>
 
-                {{-- Menu Pertanyaan --}}
                 <a href="{{ route('admin.questions.index') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
                    {{ request()->routeIs('admin.questions.*') ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <i class="bi bi-question-circle-fill"></i> Pertanyaan
                 </a>
             @endif
-
         </nav>
 
         {{-- LOGOUT --}}
-        <div class="p-4 border-t border-slate-800">
+        <div class="p-4 border-t border-slate-800 bg-slate-900 md:bg-transparent absolute bottom-0 w-full md:relative">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button
@@ -85,9 +107,38 @@
         </div>
     </aside>
 
-    <main class="flex-grow p-8 h-screen overflow-y-auto">
+    {{-- 4. KONTEN UTAMA --}}
+    <main class="flex-grow p-4 md:p-8 w-full md:w-auto overflow-x-hidden">
         @yield('content')
     </main>
+
+    {{-- 5. SCRIPT JAVASCRIPT UNTUK TOGGLE MENU --}}
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            // Hapus class translate (agar sidebar masuk ke layar)
+            sidebar.classList.toggle('-translate-x-full');
+
+            // Tampilkan Overlay
+            if (overlay.classList.contains('hidden')) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10); // Efek fade-in
+            } else {
+                closeSidebar();
+            }
+        }
+
+        function closeSidebar() {
+            // Sembunyikan sidebar ke kiri lagi
+            sidebar.classList.add('-translate-x-full');
+
+            // Sembunyikan Overlay
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300); // Tunggu animasi selesai
+        }
+    </script>
 
 </body>
 
