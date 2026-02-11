@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('question_id')->constrained('survey_questions')->onDelete('cascade');
             $table->string('option_text');
-            $table->integer('score_value'); // Skor jika memilih opsi ini
+            $table->integer('score_value'); 
             $table->timestamps();
         });
     }

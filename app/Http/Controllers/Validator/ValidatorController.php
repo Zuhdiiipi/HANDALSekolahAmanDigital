@@ -10,6 +10,7 @@ use App\Mail\AccountRejected;
 use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyCategory;
+use Illuminate\Support\Facades\Auth;
 
 class ValidatorController extends Controller
 {
@@ -28,7 +29,6 @@ class ValidatorController extends Controller
     public function verifySurvey($id)
     {
         $survey = Survey::with('school')->findOrFail($id);
-
         $categories = SurveyCategory::with(['questions.options'])->get();
         $answers = SurveyAnswer::where('survey_id', $id)
             ->get()
@@ -40,29 +40,79 @@ class ValidatorController extends Controller
     public function storeVerification(Request $request, $id)
     {
         $survey = Survey::findOrFail($id);
-        if ($request->has('notes')) {
-            foreach ($request->notes as $questionId => $note) {
-                $answer = SurveyAnswer::where('survey_id', $id)
-                    ->where('question_id', $questionId)
-                    ->first();
-
-                if ($answer) {
-                    $answer->update([
-                        'validator_note' => $note
-                    ]);
+        if ($request->action === 'reject') {
+            if ($request->has('validation')) {
+                foreach ($request->validation as $questionId => $data) {
+                    if (!empty($data['note'])) {
+                        SurveyAnswer::where('survey_id', $id)
+                            ->where('question_id', $questionId)
+                            ->update(['validator_note' => $data['note']]);
+                    }
                 }
             }
-        }
-        if ($request->action === 'reject') {
+
             $survey->update(['status' => 'draft']);
 
             return redirect()->route('validator.dashboard')
                 ->with('warning', 'Asesmen dikembalikan ke sekolah untuk perbaikan.');
         } else {
-            $survey->update(['status' => 'verified']);
+            if ($request->has('validation')) {
+                foreach ($request->validation as $questionId => $data) {
+                    $newAnswerId = $data['answer_id'] ?? null;
+                    $note        = $data['note'] ?? null;
+                    if ($newAnswerId) {
+                        SurveyAnswer::updateOrCreate(
+                            [
+                                'survey_id'   => $survey->id,
+                                'question_id' => $questionId
+                            ],
+                            [
+                                'answer_value'   => $newAnswerId,
+                                'validator_note' => $note
+                            ]
+                        );
+                    }
+                }
+            }
+            $this->recalculateScore($survey);
+            $survey->update([
+                'status' => 'verified',
+                'validator_id' => Auth::id()
+            ]);
 
             return redirect()->route('validator.dashboard')
-                ->with('success', 'Asesmen berhasil diverifikasi dan nilai telah dikunci.');
+                ->with('success', 'Asesmen berhasil diverifikasi. Skor sekolah telah diperbarui.');
+        }
+    }
+    private function recalculateScore(Survey $survey)
+    {
+        $totalObtainedScore = 0;
+        $maxPossibleScore = 0;
+
+        $answers = SurveyAnswer::where('survey_id', $survey->id)->get()->keyBy('question_id');
+        $categories = SurveyCategory::with('questions.options')->get();
+
+        foreach ($categories as $category) {
+            foreach ($category->questions as $question) {
+                $maxQuestionScore = $question->options->max('score_value');
+                if (!$maxQuestionScore) continue;
+                $maxPossibleScore += $maxQuestionScore;
+
+                if (isset($answers[$question->id])) {
+                    $selectedOptionId = $answers[$question->id]->answer_value;
+                    $option = $question->options->where('id', $selectedOptionId)->first();
+                    if ($option) {
+                        $totalObtainedScore += $option->score_value;
+                    }
+                }
+            }
+        }
+
+        $finalScore = ($maxPossibleScore > 0) ? ($totalObtainedScore / $maxPossibleScore) * 100 : 0;
+
+        $survey->update(['total_score' => $finalScore]);
+        if ($survey->school) {
+            $survey->school->update(['current_score' => $finalScore]);
         }
     }
 
@@ -71,14 +121,25 @@ class ValidatorController extends Controller
         $registration = Registration::findOrFail($id);
         return view('validator.show', compact('registration'));
     }
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
         $reg = Registration::findOrFail($id);
-        $reg->update(['status' => 'verified']);
+        $reg->update([
+            'school_name'    => $request->school_name,
+            'npsn'           => $request->npsn,
+            'address'        => $request->address,
+            'village'        => $request->village,
+            'district'       => $request->district,
+            'city'           => $request->city,
+            'email'          => $request->email,
+            'contact_number' => $request->contact_number,
+            'status'         => 'verified'
+        ]);
 
         return redirect()->route('validator.dashboard')
-            ->with('success', 'Data telah diverifikasi dan diteruskan ke Admin untuk pembuatan akun.');
+            ->with('success', 'Data sekolah diperbarui & diverifikasi. Akun siap dibuat oleh Admin.');
     }
+
     public function reject(Request $request, $id)
     {
         $request->validate(['reason' => 'required|string']);
@@ -88,11 +149,12 @@ class ValidatorController extends Controller
             'status' => 'rejected',
             'admin_notes' => $request->reason
         ]);
+
         try {
             Mail::to($reg->email)->send(new AccountRejected($reg, $request->reason));
         } catch (\Exception $e) {
             return redirect()->route('validator.dashboard')
-                ->with('warning', 'Ditolak, tapi email gagal terkirim.');
+                ->with('warning', 'Ditolak, tapi email notifikasi gagal terkirim.');
         }
 
         return redirect()->route('validator.dashboard')->with('success', 'Pendaftaran ditolak.');

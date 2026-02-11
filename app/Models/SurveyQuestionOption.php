@@ -10,7 +10,6 @@ class SurveyQuestionOption extends Model
 
     public function question()
     {
-        // TAMBAHKAN 'question_id'
         return $this->belongsTo(SurveyQuestion::class, 'question_id');
     }
 }

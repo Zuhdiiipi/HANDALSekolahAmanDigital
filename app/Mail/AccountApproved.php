@@ -16,8 +16,6 @@ class AccountApproved extends Mailable
 
     public $user;
     public $password;
-
-    // Kita terima data user dan password mentah dari Controller
     public function __construct(User $user, $password)
     {
         $this->user = $user;

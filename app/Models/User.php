@@ -22,13 +22,11 @@ class User extends Authenticatable
 
     protected $hidden = ['password', 'remember_token'];
 
-    // Relasi ke profil sekolah jika role user adalah 'school'
     public function school()
     {
         return $this->hasOne(School::class, 'user_id');
     }
 
-    // Helper untuk cek role
     public function isAdmin()
     {
         return $this->role === 'admin';

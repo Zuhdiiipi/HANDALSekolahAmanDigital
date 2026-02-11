@@ -25,7 +25,6 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        // FIX: Manual input weight = 0 agar database tidak error
         SurveyCategory::create([
             'name' => $request->name,
             'weight' => 0
@@ -44,8 +43,6 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-
-        // FIX: Manual update
         $category->update([
             'name' => $request->name,
             'weight' => 0

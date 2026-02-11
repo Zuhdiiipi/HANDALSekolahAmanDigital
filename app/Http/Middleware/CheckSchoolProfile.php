@@ -11,7 +11,6 @@ class CheckSchoolProfile
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Jika user adalah school tapi profilnya tidak ada di database
         if (Auth::check() && Auth::user()->role === 'school' && !Auth::user()->school) {
             Auth::logout();
             return redirect()->route('login')->with('error', 'Profil sekolah Anda belum dibuat oleh validator.');

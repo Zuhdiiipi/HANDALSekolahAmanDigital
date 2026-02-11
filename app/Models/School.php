@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class School extends Model
 {
-    // Di dalam file app/Models/School.php
 
     protected $fillable = [
         'user_id',

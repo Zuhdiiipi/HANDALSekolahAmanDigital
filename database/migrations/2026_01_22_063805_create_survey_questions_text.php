@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained('survey_categories')->onDelete('cascade');
             $table->text('question_text');
-            $table->enum('type', ['mcq', 'checkbox', 'number', 'text']); // mcq = pilihan ganda
-            $table->integer('weight'); // Bobot pertanyaan dalam kategori tersebut
+            $table->enum('type', ['mcq', 'checkbox', 'number', 'text']);
+            $table->integer('weight');
             $table->timestamps();
         });
     }

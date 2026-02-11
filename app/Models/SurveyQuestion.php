@@ -10,7 +10,6 @@ class SurveyQuestion extends Model
 
     public function category()
     {
-        // TAMBAHKAN 'category_id'
         return $this->belongsTo(SurveyCategory::class, 'category_id');
     }
 

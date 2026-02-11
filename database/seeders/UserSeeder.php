@@ -10,20 +10,20 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Membuat Admin
+        // Admin
         User::create([
-            'name' => 'Admin Handal',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('12345678'),
+            'name' => 'Admin',
+            'email' => 'admin@handal.com',
+            'password' => Hash::make('adminhandal123'),
             'role' => 'admin',
             'status' => 'active',
         ]);
 
-        // Membuat Validator
+        // Validator
         User::create([
-            'name' => 'Validator Sulsel',
-            'email' => 'validator@gmail.com',
-            'password' => Hash::make('12345678'),
+            'name' => 'Validator',
+            'email' => 'validator@handal.com',
+            'password' => Hash::make('validatorhandal123'),
             'role' => 'validator',
             'status' => 'active',
         ]);

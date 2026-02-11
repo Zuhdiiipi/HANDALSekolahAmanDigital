@@ -9,7 +9,7 @@ use App\Models\School;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\Request; // Jangan lupa import Request
+use Illuminate\Http\Request; 
 use App\Mail\AccountApproved;
 
 class RegistrationController extends Controller
@@ -55,8 +55,6 @@ class RegistrationController extends Controller
 
         return back()->with('success', 'Akun sekolah berhasil diterbitkan!');
     }
-
-    // Kembalikan ke Validator 
     public function rejectToValidator(Request $request, $id)
     {
         $request->validate(['admin_note' => 'required|string']);

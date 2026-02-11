@@ -32,7 +32,6 @@
 
                             <td class="px-6 py-4 text-right flex justify-end gap-2">
 
-                                {{-- TERBITKAN AKUN --}}
                                 <form action="{{ route('admin.registrations.create', $reg->id) }}" method="POST">
                                     @csrf
                                     <button type="submit"
@@ -41,7 +40,6 @@
                                     </button>
                                 </form>
 
-                                {{-- KEMBALIKAN (MODAL) --}}
                                 <button
                                     data-id="{{ $reg->id }}"
                                     data-name="{{ $reg->school_name }}"
@@ -64,7 +62,6 @@
         </div>
     </div>
 
-    {{-- MODAL PENGEMBALIAN --}}
     <div id="adminRejectModal"
         class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
@@ -103,7 +100,6 @@
         </div>
     </div>
 
-    {{-- SCRIPT --}}
     <script>
         function openAdminRejectModal(button) {
             const id = button.dataset.id;

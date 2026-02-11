@@ -5,8 +5,8 @@
 
         {{-- 1. HEADER SECTION --}}
         <div class="flex items-center gap-4 mb-8">
-            <a href="{{ route('admin.categories.index') }}" 
-               class="group w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
+            <a href="{{ route('admin.categories.index') }}"
+                class="group w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
                 <i class="bi bi-arrow-left text-lg group-hover:-translate-x-0.5 transition-transform"></i>
             </a>
             <div>
@@ -21,25 +21,21 @@
                 <form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    
+
                     <div class="space-y-6">
-                        
-                        {{-- Input: Nama Kategori --}}
                         <div>
-                            <label for="name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
+                            <label for="name"
+                                class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
                                 Nama Kategori / Bab
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <i class="bi bi-tag-fill text-slate-400"></i>
                                 </div>
-                                <input type="text" 
-                                       name="name" 
-                                       id="name"
-                                       value="{{ old('name', $category->name) }}" 
-                                       class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder-slate-400" 
-                                       placeholder="Contoh: Kepemimpinan, Infrastruktur..."
-                                       required>
+                                <input type="text" name="name" id="name"
+                                    value="{{ old('name', $category->name) }}"
+                                    class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder-slate-400"
+                                    placeholder="Contoh: Kepemimpinan, Infrastruktur..." required>
                             </div>
                             @error('name')
                                 <p class="mt-2 text-xs text-red-500 font-bold flex items-center gap-1">
@@ -47,20 +43,14 @@
                                 </p>
                             @enderror
                         </div>
-
-                        {{-- HAPUS INPUT BOBOT DISINI (Sesuai Request) --}}
-
-                        {{-- Divider --}}
                         <div class="border-t border-slate-100 pt-2"></div>
-
-                        {{-- Action Buttons --}}
                         <div class="flex items-center justify-end gap-3">
-                            <a href="{{ route('admin.categories.index') }}" 
-                               class="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-all">
+                            <a href="{{ route('admin.categories.index') }}"
+                                class="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-all">
                                 Batal
                             </a>
-                            <button type="submit" 
-                                    class="inline-flex items-center justify-center px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 hover:shadow-indigo-300 hover:-translate-y-0.5 transition-all gap-2">
+                            <button type="submit"
+                                class="inline-flex items-center justify-center px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 hover:shadow-indigo-300 hover:-translate-y-0.5 transition-all gap-2">
                                 <i class="bi bi-check-lg text-lg"></i>
                                 <span>Simpan Perubahan</span>
                             </button>
