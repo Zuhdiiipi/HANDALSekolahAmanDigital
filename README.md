@@ -38,8 +38,8 @@ Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal A
 
 1.  **Clone Repository**
     ```bash
-    git clone [https://github.com/username-anda/handal-sekolah.git](https://github.com/username-anda/handal-sekolah.git)
-    cd handal-sekolah
+    git clone [https://github.com/Zuhdiiipi/HANDALSekolahAmanDigital.git](https://github.com/Zuhdiiipi/HANDALSekolahAmanDigital.git)
+    cd HANDALSekolahAmanDigital
     ```
 
 2.  **Install Dependensi Backend**
