@@ -21,18 +21,18 @@
 
 ---
 
-## 🚀 Tentang Aplikasi
+## Tentang Aplikasi
 
 **Handal Sekolah Aman Digital** adalah platform berbasis web yang dirancang untuk membantu institusi pendidikan (sekolah) melakukan evaluasi mandiri (*self-assessment*) terhadap infrastruktur, kebijakan, dan literasi keamanan digital mereka. Sistem ini memberikan penilaian terukur untuk membantu sekolah meningkatkan standar keamanan siber di lingkungan pendidikan.
 
-## 🛠️ Teknologi Utama
+## Teknologi Utama
 
 Aplikasi ini dibangun menggunakan teknologi web modern untuk menjamin performa dan kemudahan pengembangan:
 
 -   **Backend Framework:** [Laravel 12](https://laravel.com)
 -   **Frontend Styling:** [Tailwind CSS v4.0](https://tailwindcss.com)
 
-## ⚙️ Instalasi & Konfigurasi
+## Instalasi & Konfigurasi
 
 Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal Anda:
 
@@ -76,7 +76,7 @@ Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal A
     ```
     Akses aplikasi di `http://localhost:8000`.
 
-## 👥 Kredit & Tim Pengembang
+## Kredit & Tim Pengembang
 
 Proyek ini dikembangkan sebagai bagian dari program di **BBLSDM Komdigi Makassar**.
 
