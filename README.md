@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://handal-sekolah.test">
-    <img src="public/img/Handal 8.png" alt="Logo Handal Sekolah Aman Digital" width="800">
+    <img src="public/img/Handal 8.png" alt="Logo Handal Sekolah Aman Digital" width="500">
   </a>
 </p>
 
