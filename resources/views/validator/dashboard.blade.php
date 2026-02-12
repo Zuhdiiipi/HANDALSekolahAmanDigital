@@ -38,8 +38,6 @@
             </table>
         </div>
 
-        {{-- ... Tabel Pendaftaran yang lama ... --}}
-
         <div class="mt-12 mb-8">
             <h2 class="text-3xl font-extrabold text-slate-900">Verifikasi Asesmen Sekolah</h2>
             <p class="text-slate-500">Daftar sekolah yang telah menyelesaikan pengisian indikator.</p>

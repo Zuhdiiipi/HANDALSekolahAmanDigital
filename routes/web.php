@@ -34,15 +34,11 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     Route::middleware(['role:school'])->prefix('school')->name('school.')->group(function () {
-        // 1. Dashboard Utama
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        // 2. Fitur Survei
-        Route::get('/survey/start', [SurveyController::class, 'start'])->name('survey.start');       // Mulai ulang sesi
-        Route::get('/survey/step/{step}', [SurveyController::class, 'step'])->name('survey.step');   // Tampilkan pertanyaan per langkah
-        Route::post('/survey/process/{step}', [SurveyController::class, 'process'])->name('survey.process'); // Simpan jawaban sementara
-        Route::get('/survey/result/{id}', [SurveyController::class, 'result'])->name('survey.result'); // Hasil Akhir
-        // 3. Profil 
-        // FITUR PROFIL
+        Route::get('/survey/start', [SurveyController::class, 'start'])->name('survey.start');
+        Route::get('/survey/step/{step}', [SurveyController::class, 'step'])->name('survey.step');
+        Route::post('/survey/process/{step}', [SurveyController::class, 'process'])->name('survey.process');
+        Route::get('/survey/result/{id}', [SurveyController::class, 'result'])->name('survey.result');
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
@@ -61,15 +57,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardAdminController::class, 'index'])
             ->name('dashboard');
-        // Menu "Penerbitan Akun"
         Route::get('/registrations-verified', [RegistrationController::class, 'index'])
             ->name('registrations.index');
 
-        // Aksi 1: Terima & Buat Akun
         Route::post('/registrations/create-account/{id}', [RegistrationController::class, 'createAccount'])
             ->name('registrations.create');
 
-        // Aksi 2: Tolak & Kembalikan ke Validator 
         Route::post('/registrations/reject/{id}', [RegistrationController::class, 'rejectToValidator'])
             ->name('registrations.reject');
 
