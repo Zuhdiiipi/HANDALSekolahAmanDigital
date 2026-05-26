@@ -122,23 +122,16 @@ class ValidatorController extends Controller
         return view('validator.show', compact('registration'));
     }
     public function approve(Request $request, $id)
-    {
-        $reg = Registration::findOrFail($id);
-        $reg->update([
-            'school_name'    => $request->school_name,
-            'npsn'           => $request->npsn,
-            'address'        => $request->address,
-            'village'        => $request->village,
-            'district'       => $request->district,
-            'city'           => $request->city,
-            'email'          => $request->email,
-            'contact_number' => $request->contact_number,
-            'status'         => 'verified'
-        ]);
+{
+    $reg = Registration::findOrFail($id);
 
-        return redirect()->route('validator.dashboard')
-            ->with('success', 'Data sekolah diperbarui & diverifikasi. Akun siap dibuat oleh Admin.');
-    }
+    $reg->update([
+        'status' => 'verified',
+    ]);
+
+    return redirect()->route('validator.dashboard')
+        ->with('success', 'Pendaftaran sekolah berhasil diverifikasi. Akun siap dibuat oleh Admin.');
+}
 
     public function reject(Request $request, $id)
     {

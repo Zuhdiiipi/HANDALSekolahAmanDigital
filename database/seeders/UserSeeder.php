@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@handal.com',
-            'password' => Hash::make('adminhandal123'),
+            'password' => Hash::make('12345678'),
             'role' => 'admin',
             'status' => 'active',
         ]);
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Validator',
             'email' => 'validator@handal.com',
-            'password' => Hash::make('validatorhandal123'),
+            'password' => Hash::make('12345678'),
             'role' => 'validator',
             'status' => 'active',
         ]);
