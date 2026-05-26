@@ -34,11 +34,8 @@ class SurveyController extends Controller
 
         return redirect()->route('school.survey.step', 1);
     }
-<<<<<<< HEAD
-=======
 
     // 2. Menampilkan Pertanyaan Per Kategori (Step)
->>>>>>> 546dfcf (Revisi Bug Tier)
     public function step($stepNumber)
     {
         $user = Auth::user();
@@ -57,11 +54,8 @@ class SurveyController extends Controller
 
         $currentCategory = $categories[$stepNumber - 1];
         $currentCategory->load('questions.options');
-<<<<<<< HEAD
-=======
 
         // KUNCI AGAR JAWABAN TIDAK HILANG
->>>>>>> 546dfcf (Revisi Bug Tier)
         $existingAnswers = SurveyAnswer::where('survey_id', $survey->id ?? 0)
             ->get()
             ->keyBy('question_id');
@@ -77,46 +71,29 @@ class SurveyController extends Controller
     public function process(Request $request, $stepNumber)
     {
         $user = Auth::user();
-<<<<<<< HEAD
-=======
 
         // 1. Cari data survei draft milik sekolah ini
->>>>>>> 546dfcf (Revisi Bug Tier)
         $survey = Survey::where('school_id', $user->school->id)
             ->where('year', date('Y'))
             ->where('status', 'draft')
             ->first();
-<<<<<<< HEAD
-=======
-
->>>>>>> 546dfcf (Revisi Bug Tier)
         if (!$survey) {
             return redirect()->route('school.dashboard')
                 ->with('error', 'Sesi survei tidak ditemukan atau sudah dikunci.');
         }
         if ($request->has('answers')) {
             foreach ($request->answers as $questionId => $optionId) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 546dfcf (Revisi Bug Tier)
                 $existingAnswer = SurveyAnswer::where('survey_id', $survey->id)
                     ->where('question_id', $questionId)
                     ->first();
 
                 $noteToSave = $existingAnswer ? $existingAnswer->validator_note : null;
-<<<<<<< HEAD
-                if ($existingAnswer && $existingAnswer->answer_value != $optionId) {
-                    $noteToSave = null;
-                }
-=======
 
                 // Logika Penghapusan Catatan Revisi
                 if ($existingAnswer && $existingAnswer->answer_value != $optionId) {
                     $noteToSave = null;
                 }
 
->>>>>>> 546dfcf (Revisi Bug Tier)
                 SurveyAnswer::updateOrCreate(
                     [
                         'survey_id'   => $survey->id,
@@ -129,54 +106,34 @@ class SurveyController extends Controller
                 );
             }
         }
-<<<<<<< HEAD
-=======
 
         // 3. Logika Navigasi
->>>>>>> 546dfcf (Revisi Bug Tier)
         $totalSteps = SurveyCategory::count();
 
         if ($stepNumber < $totalSteps) {
             return redirect()->route('school.survey.step', $stepNumber + 1);
         } else {
             $this->calculateFinalScore($survey);
-<<<<<<< HEAD
-=======
-
->>>>>>> 546dfcf (Revisi Bug Tier)
             return redirect()->route('school.dashboard')
                 ->with('success', 'Asesmen berhasil disubmit! Nilai sementara Anda sudah keluar.');
         }
     }
-<<<<<<< HEAD
-=======
 
     // 4. Logika Hitung Skor
->>>>>>> 546dfcf (Revisi Bug Tier)
     private function calculateFinalScore(Survey $survey)
     {
         $totalObtainedScore = 0;
         $maxPossibleScore = 0;
-<<<<<<< HEAD
-=======
-
->>>>>>> 546dfcf (Revisi Bug Tier)
         $categories = SurveyCategory::with('questions.options')->get();
 
         foreach ($categories as $category) {
             foreach ($category->questions as $question) {
                 $maxQuestionScore = $question->options->max('score_value');
-<<<<<<< HEAD
-                if (!$maxQuestionScore) continue;
-
-                $maxPossibleScore += $maxQuestionScore;
-=======
 
                 if (!$maxQuestionScore) continue;
 
                 $maxPossibleScore += $maxQuestionScore;
 
->>>>>>> 546dfcf (Revisi Bug Tier)
                 $answer = SurveyAnswer::where('survey_id', $survey->id)
                     ->where('question_id', $question->id)
                     ->first();
