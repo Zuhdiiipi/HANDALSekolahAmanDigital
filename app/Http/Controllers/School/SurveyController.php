@@ -189,19 +189,11 @@ class SurveyController extends Controller
                 }
             }
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 546dfcf (Revisi Bug Tier)
         if ($maxPossibleScore > 0) {
             $finalScore = ($totalObtainedScore / $maxPossibleScore) * 100;
         } else {
             $finalScore = 0;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 546dfcf (Revisi Bug Tier)
         $survey->update([
             'total_score' => $finalScore,
             'status' => 'submitted'

@@ -13,18 +13,15 @@ class SurveySeeder extends Seeder
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        SurveyCategory::truncate();
-        SurveyQuestion::truncate();
         SurveyQuestionOption::truncate();
+        SurveyQuestion::truncate();
+        SurveyCategory::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Data Survey 
         $data = [
-            // ==========================================
-            // KATEGORI 1: SDM & LITERASI DIGITAL
-            // ==========================================
             [
                 'name' => 'SDM & Literasi Digital',
+                'weight' => 1,
                 'questions' => [
                     [
                         'text' => 'Kesadaran Cyber bullying',
@@ -99,11 +96,9 @@ class SurveySeeder extends Seeder
                 ]
             ],
 
-            // ==========================================
-            // KATEGORI 2: INFRASTRUKTUR DIGITAL
-            // ==========================================
             [
                 'name' => 'Infrastruktur Digital',
+                'weight' => 2,
                 'questions' => [
                     [
                         'text' => 'Spesifikasi Perangkat Komputer (Benchmarking)',
@@ -158,11 +153,9 @@ class SurveySeeder extends Seeder
                 ]
             ],
 
-            // ==========================================
-            // KATEGORI 3: KEAMANAN DIGITAL
-            // ==========================================
             [
                 'name' => 'Keamanan Digital',
+                'weight' => 3,
                 'questions' => [
                     [
                         'text' => 'Kebijakan pembatasan penggunaan perangkat elektronik',
@@ -207,11 +200,9 @@ class SurveySeeder extends Seeder
                 ]
             ],
 
-            // ==========================================
-            // KATEGORI 4: SOSIAL DIGITAL
-            // ==========================================
             [
                 'name' => 'Sosial Digital',
+                'weight' => 4,
                 'questions' => [
                     [
                         'text' => 'Kesadaran Jejak Digital',
@@ -267,20 +258,23 @@ class SurveySeeder extends Seeder
             ],
         ];
 
-        // 3. Eksekusi Loop untuk Menyimpan ke Database
         foreach ($data as $cat) {
-            $category = SurveyCategory::create(['name' => $cat['name']]);
+            $category = SurveyCategory::create([
+                'name' => $cat['name'],
+                'weight' => $cat['weight'],
+            ]);
 
-            foreach ($cat['questions'] as $q) {
+            foreach ($cat['questions'] as $qIndex => $q) {
                 $question = $category->questions()->create([
                     'question_text' => $q['text'],
-                    'type' => 'mcq'
+                    'type' => 'mcq',
+                    'weight' => $qIndex + 1,
                 ]);
 
                 foreach ($q['options'] as $opt) {
                     $question->options()->create([
                         'option_text' => $opt['text'],
-                        'score_value' => $opt['score']
+                        'score_value' => $opt['score'],
                     ]);
                 }
             }
