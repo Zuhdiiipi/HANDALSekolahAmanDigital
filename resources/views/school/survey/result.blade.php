@@ -2,21 +2,15 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {{-- HEADER --}}
+
+        {{-- 1. HEADER --}}
         <div class="text-center mb-12 relative">
-            <div
-                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-yellow-300/40 blur-3xl rounded-full -z-10">
-            </div>
-            <div
-                class="group relative inline-flex items-center justify-center w-28 h-28 bg-gradient-to-b from-white to-yellow-50 rounded-full mb-6 shadow-[0_15px_40px_-10px_rgba(250,204,21,0.5)] border-4 border-white ring-1 ring-yellow-200 transform transition-all duration-500 hover:scale-110 hover:-translate-y-2 overflow-hidden">
+            
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-yellow-300/40 blur-3xl rounded-full -z-10"></div>
 
-                <div
-                    class="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[25deg] transition-all duration-1000 group-hover:left-[200%] z-20">
-                </div>
-
-                <i
-                    class="bi bi-trophy-fill text-6xl text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 drop-shadow-sm filter z-10 relative"></i>
-
+            <div class="group relative inline-flex items-center justify-center w-28 h-28 bg-gradient-to-b from-white to-yellow-50 rounded-full mb-6 shadow-[0_15px_40px_-10px_rgba(250,204,21,0.5)] border-4 border-white ring-1 ring-yellow-200 transform transition-all duration-500 hover:scale-110 hover:-translate-y-2 overflow-hidden">
+                <div class="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[25deg] transition-all duration-1000 group-hover:left-[200%] z-20"></div>
+                <i class="bi bi-trophy-fill text-6xl text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 drop-shadow-sm filter z-10 relative"></i>
                 <div class="absolute top-6 right-7 text-yellow-400 animate-pulse z-10">
                     <i class="bi bi-star-fill text-[8px]"></i>
                 </div>
@@ -33,117 +27,139 @@
             </p>
         </div>
 
-        {{-- LOGIKA WARNA & ANIMASI TIER --}}
+        {{-- LOGIKA WARNA & ANIMASI TIER (MENGIKUTI REFERENSI YANG BENAR) --}}
         @php
             $rankLabel = strtolower($survey->rank_label ?? '');
-            $status = $survey->status ?? 'draft';
+            $score = (float) ($survey->total_score ?? 0);
+            $status = strtolower($survey->status ?? 'draft');
+            
+            // Verifikasi status: verified atau approved
             $isVerified = in_array($status, ['verified', 'approved']);
+
+            // Elemen Animasi Shine (Kilatan Cahaya) - Dipakai berulang
+            $shineEffect = '<div class="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[25deg] transition-all duration-1000 group-hover/card:left-[200%] z-0"></div>';
+
+            // Default Style (Draft/Submitted/Fallback)
             $theme = [
-                'card_bg' => 'from-gray-800 to-gray-900',
-                'text_main' => 'text-gray-200',
-                'text_sub' => 'text-gray-500',
-                'icon_bg' => 'bg-gray-700/50',
-                'border' => 'border-gray-700',
-                'hover_shadow' => '',
-                'hover_border' => '',
+                'card_bg'      => 'from-emerald-600 to-teal-700',
+                'text_main'    => 'text-white',
+                'text_sub'     => 'text-emerald-100',
+                'icon_bg'      => 'bg-emerald-800/30',
+                'border'       => 'border-emerald-500/30',
+                'anim_class'   => '',
+                'decor_element'=> ''
             ];
 
+            // Terapkan warna jika sudah verified/approved
             if ($isVerified) {
+                // 1. DIAMOND (Sekolah Unggul) -> UNGU + SHINE + STARS
                 if (str_contains($rankLabel, 'unggul') || str_contains($rankLabel, 'diamond')) {
                     $theme = [
-                        'card_bg' => 'from-indigo-600 via-purple-600 to-fuchsia-700',
-                        'text_main' => 'text-white',
-                        'text_sub' => 'text-indigo-100',
-                        'icon_bg' => 'bg-indigo-900/30',
-                        'border' => 'border-indigo-400/50',
-                        'hover_shadow' => 'hover:shadow-[0_20px_50px_-12px_rgba(147,51,234,0.6)]',
-                        'hover_border' => 'hover:border-fuchsia-300/60',
+                        'card_bg'      => 'from-indigo-600 via-purple-600 to-fuchsia-700',
+                        'text_main'    => 'text-white',
+                        'text_sub'     => 'text-indigo-100',
+                        'icon_bg'      => 'bg-indigo-900/30',
+                        'border'       => 'border-indigo-400/50',
+                        'anim_class'   => 'hover:shadow-[0_20px_50px_-12px_rgba(168,85,247,0.6)] hover:border-fuchsia-300/60',
+                        'decor_element'=> $shineEffect . '<div class="absolute top-2 right-4 text-white/70 animate-[ping_2s_infinite] z-0"><i class="bi bi-star-fill text-[8px]"></i></div>'
                     ];
-                } elseif (str_contains($rankLabel, 'maju') || str_contains($rankLabel, 'platinum')) {
+                } 
+                // 2. PLATINUM (Sekolah Maju) -> CYAN + SHINE
+                elseif (str_contains($rankLabel, 'maju') || str_contains($rankLabel, 'platinum')) {
                     $theme = [
-                        'card_bg' => 'from-slate-500 via-cyan-600 to-blue-700',
-                        'text_main' => 'text-white',
-                        'text_sub' => 'text-cyan-100',
-                        'icon_bg' => 'bg-cyan-800/30',
-                        'border' => 'border-cyan-400/50',
-                        'hover_shadow' => 'hover:shadow-[0_20px_50px_-12px_rgba(34,211,238,0.6)]',
-                        'hover_border' => 'hover:border-cyan-200/60',
+                        'card_bg'      => 'from-slate-500 via-cyan-600 to-blue-700',
+                        'text_main'    => 'text-white',
+                        'text_sub'     => 'text-cyan-100',
+                        'icon_bg'      => 'bg-cyan-800/30',
+                        'border'       => 'border-cyan-400/50',
+                        'anim_class'   => 'hover:shadow-[0_20px_50px_-12px_rgba(34,211,238,0.6)] hover:border-cyan-200/60',
+                        'decor_element'=> $shineEffect
                     ];
-                } elseif (str_contains($rankLabel, 'berkembang') || str_contains($rankLabel, 'gold')) {
+                } 
+                // 3. GOLD (Sekolah Berkembang) -> EMAS + SHINE
+                elseif (str_contains($rankLabel, 'berkembang') || str_contains($rankLabel, 'gold')) {
                     $theme = [
-                        'card_bg' => 'from-yellow-600 via-amber-500 to-orange-600',
-                        'text_main' => 'text-white',
-                        'text_sub' => 'text-yellow-100',
-                        'icon_bg' => 'bg-yellow-900/30',
-                        'border' => 'border-yellow-400/50',
-                        'hover_shadow' => 'hover:shadow-[0_20px_50px_-12px_rgba(245,158,11,0.6)]',
-                        'hover_border' => 'hover:border-yellow-200/60',
+                        'card_bg'      => 'from-yellow-600 via-amber-500 to-orange-600',
+                        'text_main'    => 'text-white',
+                        'text_sub'     => 'text-yellow-100',
+                        'icon_bg'      => 'bg-yellow-900/30',
+                        'border'       => 'border-yellow-400/50',
+                        'anim_class'   => 'hover:shadow-[0_20px_50px_-12px_rgba(245,158,11,0.6)] hover:border-yellow-200/60',
+                        'decor_element'=> $shineEffect
                     ];
-                } elseif (str_contains($rankLabel, 'pemula') || str_contains($rankLabel, 'silver')) {
+                } 
+                // 4. SILVER (Sekolah Pemula) -> PERAK + SHINE
+                elseif (str_contains($rankLabel, 'pemula') || str_contains($rankLabel, 'silver')) {
                     $theme = [
-                        'card_bg' => 'from-gray-500 via-slate-500 to-zinc-600',
-                        'text_main' => 'text-white',
-                        'text_sub' => 'text-gray-200',
-                        'icon_bg' => 'bg-gray-800/30',
-                        'border' => 'border-gray-400/50',
-                        'hover_shadow' => 'hover:shadow-[0_20px_50px_-12px_rgba(209,213,219,0.5)]',
-                        'hover_border' => 'hover:border-white/40',
+                        'card_bg'      => 'from-gray-500 via-slate-500 to-zinc-600',
+                        'text_main'    => 'text-white',
+                        'text_sub'     => 'text-gray-200',
+                        'icon_bg'      => 'bg-gray-800/30',
+                        'border'       => 'border-gray-400/50',
+                        'anim_class'   => 'hover:shadow-[0_20px_50px_-12px_rgba(209,213,219,0.5)] hover:border-white/40',
+                        'decor_element'=> $shineEffect
+                    ];
+                }
+                // 5. GAGAL -> HITAM (TIDAK ADA ANIMASI SHINE)
+                elseif (str_contains($rankLabel, 'gagal')) {
+                    $theme = [
+                        'card_bg'      => 'from-gray-900 via-slate-900 to-black',
+                        'text_main'    => 'text-gray-400',
+                        'text_sub'     => 'text-gray-500',
+                        'icon_bg'      => 'bg-gray-800',
+                        'border'       => 'border-gray-700',
+                        'anim_class'   => '',
+                        'decor_element'=> ''
                     ];
                 }
             }
         @endphp
 
         {{-- 2. SCORE & TIER CARD --}}
-        <div
-            class="bg-gradient-to-br {{ $theme['card_bg'] }} rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden group transition-all duration-500">
-
-            <div
-                class="absolute top-0 right-0 -mt-16 -mr-16 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-1000">
-            </div>
-
-            <div
-                class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-
-                {{-- Skor --}}
+        <div class="bg-gradient-to-br {{ $theme['card_bg'] }} rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden group transition-all duration-500">
+            
+            <div class="absolute top-0 right-0 -mt-16 -mr-16 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-1000"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+                
+                {{-- Bagian Kiri: Skor --}}
                 <div>
                     <h2 class="{{ $theme['text_sub'] }} text-xs font-bold uppercase tracking-widest mb-1">Total Skor
                         Keamanan</h2>
 
                     <div class="flex items-baseline justify-center md:justify-start {{ $theme['text_main'] }}">
                         <span class="text-7xl font-black tracking-tighter drop-shadow-md">
-                            {{ number_format($survey->total_score ?? 0, 1) }}
+                            {{ number_format($score, 1) }}
                         </span>
                         <span class="text-2xl font-bold opacity-70 ml-2">/100</span>
                     </div>
 
-                    <div
-                        class="mt-4 inline-flex items-center gap-2 bg-black/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
-                        <span
-                            class="w-2.5 h-2.5 rounded-full {{ $isVerified ? 'bg-white shadow-[0_0_10px_white]' : 'bg-slate-400' }}"></span>
+                    <div class="mt-4 inline-flex items-center gap-2 bg-black/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
+                        <span class="w-2.5 h-2.5 rounded-full {{ $isVerified ? 'bg-green-400 shadow-[0_0_10px_#4ade80]' : 'bg-slate-400' }}"></span>
                         <span class="text-xs font-bold uppercase tracking-wide text-white">
                             {{ $survey->status ?? 'Draft' }}
                         </span>
                     </div>
                 </div>
 
-                {{-- Tampilan Tier --}}
+                {{-- Bagian Kanan: Tampilan Tier --}}
                 @if ($isVerified)
                     <div class="flex flex-col items-center md:items-end">
                         <p class="{{ $theme['text_sub'] }} text-[10px] font-bold uppercase tracking-widest mb-4 opacity-90">
                             Predikat Pencapaian
                         </p>
+                        
+                        <div class="group/card relative flex items-center gap-5 bg-white/10 backdrop-blur-md px-8 py-5 rounded-2xl border {{ $theme['border'] }} shadow-lg min-w-[280px] cursor-default transition-all duration-500 ease-out hover:-translate-y-2 hover:scale-[1.03] {{ $theme['anim_class'] }} overflow-hidden">
+                            
+                            {{-- Inject Elemen Animasi dari Logika PHP --}}
+                            {!! $theme['decor_element'] !!}
 
-                        <div
-                            class="group/card relative flex items-center gap-5 bg-white/10 backdrop-blur-md px-8 py-5 rounded-2xl border {{ $theme['border'] }} shadow-lg min-w-[280px] cursor-default transition-all duration-500 ease-out hover:-translate-y-2 hover:scale-[1.03] {{ $theme['hover_shadow'] }} {{ $theme['hover_border'] }} overflow-hidden">
-
-                            <div
-                                class="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[25deg] transition-all duration-1000 group-hover/card:left-[200%]">
-                            </div>
-
-                            <div
-                                class="w-16 h-16 rounded-xl {{ $theme['icon_bg'] }} flex items-center justify-center border border-white/20 shadow-inner group-hover/card:rotate-[10deg] transition-transform duration-500">
-                                <i
-                                    class="bi {{ $survey->rank_icon ?? 'bi-shield-check' }} text-4xl {{ $theme['text_main'] }} drop-shadow-md"></i>
+                            <div class="w-16 h-16 rounded-xl {{ $theme['icon_bg'] }} flex items-center justify-center border border-white/20 shadow-inner group-hover/card:rotate-[10deg] transition-transform duration-500 relative z-10">
+                                @if(str_contains($rankLabel, 'gagal'))
+                                    <i class="bi bi-x-circle text-4xl {{ $theme['text_main'] }} drop-shadow-md"></i>
+                                @else
+                                    <i class="bi {{ $survey->rank_icon ?? 'bi-shield-check' }} text-4xl {{ $theme['text_main'] }} drop-shadow-md"></i>
+                                @endif
                             </div>
 
                             <div class="text-left relative z-10">
@@ -162,19 +178,18 @@
                         </div>
                     </div>
                 @else
-                    <div class="opacity-50 p-6 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-sm">
-                        <i class="bi bi-lock-fill text-3xl text-white mb-2 block"></i>
-                        <span class="text-xs font-bold uppercase tracking-widest text-white">Predikat Terkunci</span>
+                    <div class="opacity-80 p-6 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-sm">
+                        <i class="bi bi-lock-fill text-3xl text-white/50 mb-2 block text-center md:text-left"></i>
+                        <span class="text-xs font-bold uppercase tracking-widest text-white/70">Predikat Terkunci (Menunggu Verifikasi)</span>
                     </div>
                 @endif
 
             </div>
         </div>
 
-        {{-- DETAIL JAWABAN --}}
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-            <div
-                class="px-8 py-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
+        {{-- 3. DETAIL JAWABAN --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-8">
+            <div class="px-8 py-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <i class="bi bi-list-check text-blue-600 text-lg"></i> Rincian Jawaban
                 </h3>
